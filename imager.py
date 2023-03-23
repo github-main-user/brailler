@@ -6,7 +6,7 @@ from braille_handler import BrailleHandler
 
 class ExistanceChacker:
     @staticmethod
-    def is_exist(file_path, error_msg):
+    def is_exist(file_path, error_msg) -> str:
         if os.path.exists(file_path):
             return file_path
         else:
@@ -24,7 +24,7 @@ class ScreenshotTaker:
     def _take_screenshot(self):
         subprocess.call(['scrot', '-s', '-o', self._temp_file])
 
-    def get_screenshot(self):
+    def get_screenshot(self) -> str:
         self._free_path()
         self._take_screenshot()
         return ExistanceChacker.is_exist(self._temp_file,
@@ -33,14 +33,14 @@ class ScreenshotTaker:
 
 class FileHandler:
     def __init__(self):
-        self._screenshot_taker = ScreenshotTaker('/tmp/brailler_temp_image.png')
+        self._screenshoter = ScreenshotTaker('/tmp/brailler_temp_image.png')
 
-    def get_file_path(self, file_path):
+    def get_file_path(self, file_path) -> str:
         if file_path:
             return ExistanceChacker.is_exist(file_path,
                                              error_msg='The file does not exists')
         else:
-            return self._screenshot_taker.get_screenshot()
+            return self._screenshoter.get_screenshot()
 
 
 class SteppedInt:
@@ -73,7 +73,8 @@ class BrailleImage:
 
         self._braille_handler = BrailleHandler()
 
-    def generate_image(self):
+    def generate_image(self) -> str:
+        '''Generates a list of "⣿" and returns it as a formatted string'''
         brailles_list = []
         for y in self._height:
             for x in self._width:

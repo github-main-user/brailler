@@ -2,7 +2,7 @@ import strings
 
 
 class ColorHelper:
-    def get_brightness(self, r, g, b):
+    def get_brightness(self, r, g, b) -> float:
         return (r / 255 + g / 255 + b / 255) / 3
 
 
@@ -21,10 +21,11 @@ class BrailleHandler:
         self._brailles = strings.BRAILLES
 
     def _byte_to_symbol(self, byte):
+        '''Input 11000011 -> Output "⢣" ''' 
         return self._brailles[byte]
 
     def get_symbol(self, colors: list, bright_bound: float):
-        '''Input [(r, g, b), (r, g, b), ...] -> output "⣿" '''
+        '''Input [(r, g, b), (r, g, b), ...] -> Output "⣿" '''
         byte = 0
         self._sequence_helper.even_out_sequence(colors, 8)
 
