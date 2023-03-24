@@ -1,12 +1,12 @@
 import strings
 
 
-class ColorHelper:
+class _ColorHelper:
     def get_brightness(self, r, g, b) -> float:
         return (r / 255 + g / 255 + b / 255) / 3
 
 
-class SequenceHelper:
+class _SequenceHelper:
     def even_out_sequence(self, colors, num):
         if len(colors) < num:
             colors.extend([(0, 0, 0) for i in range(num - len(colors))])
@@ -16,8 +16,8 @@ class SequenceHelper:
 
 class BrailleHandler:
     def __init__(self):
-        self._color_helper = ColorHelper()
-        self._sequence_helper = SequenceHelper()
+        self._color_helper = _ColorHelper()
+        self._sequence_helper = _SequenceHelper()
         self._brailles = strings.BRAILLES
 
     def _byte_to_symbol(self, byte):
