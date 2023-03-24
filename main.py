@@ -1,8 +1,12 @@
 #! /bin/python
 import argparse
 
+from os import get_terminal_size
 from PIL import Image
 from imager import FileHandler, BrailleImage
+
+COLS = get_terminal_size().columns
+LINES = get_terminal_size().lines
 
 
 class Starter:
@@ -14,8 +18,8 @@ class Starter:
 
         with Image.open(file) as img:
             braille_image = BrailleImage(image=img,
-                                         width=args.x,
-                                         height=args.y,
+                                         symbols_x=args.s[0],
+                                         symbols_y=args.s[1],
                                          threshold=args.t)
 
             print(braille_image.generate_image())
@@ -28,9 +32,8 @@ class Parser:
 
     def start_parsing(self):
         self._parser.add_argument(
-            '-x', type=int, help='Specify width (50 by default)', default=50)
-        self._parser.add_argument(
-            '-y', type=int, help='Specify height (50 by default)', default=50)
+            '-s', type=int, nargs='+', help='Specify braille image size x y (in symbols) - default COLS LINES',
+            default=[COLS, LINES])
         self._parser.add_argument(
             '-p', type=str, help='Specify image path (if empty - do screenshot)', default='')
         self._parser.add_argument(

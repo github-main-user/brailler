@@ -66,19 +66,18 @@ class _SteppedInt:
 
 
 class BrailleImage:
-    def __init__(self, image, width, height, threshold):
-        self._width = _SteppedInt(width, 2)
-        self._height = _SteppedInt(height, 4)
+    def __init__(self, image, symbols_x, symbols_y, threshold):
+        self._width = _SteppedInt(symbols_x * 2, 2)
+        self._height = _SteppedInt(symbols_y * 4, 4)
 
         image = image.convert('L')
         image = image.resize((self._width, self._height))
-        self._image = self._dithering(image)
-        self._threshold = threshold
+        self._image = self._dithering(image, threshold)
 
         self._braille_handler = BrailleHandler()
 
     @staticmethod
-    def _dithering(image):
+    def _dithering(image, threshold):
         output_image = Image.new('L', image.size, 255)
 
         color_depth = 8
@@ -88,7 +87,13 @@ class BrailleImage:
         for y in range(1, image.height - 1):
             for x in range(1, image.width - 1):
                 old_pixel = image.getpixel((x, y))
-                new_pixel = min(palette, key=lambda x: abs(x - old_pixel))
+
+                if old_pixel / 255 < threshold: 
+                    new_pixel = 0
+                else:
+                    new_pixel = 255
+
+                # new_pixel = min(palette, key=lambda x: abs(x - old_pixel))
                 output_image.putpixel((x, y), new_pixel)
                 quant_error = old_pixel - new_pixel
 
@@ -101,6 +106,8 @@ class BrailleImage:
                 image.putpixel(
                     (x + 1, y + 1), image.getpixel((x + 1, y + 1)) + quant_error * 1 // 16)
 
+        # output_image.show()
+        # exit()
         return output_image
 
     def generate_image(self) -> str:
@@ -115,7 +122,7 @@ class BrailleImage:
                         colors.append(self._image.getpixel((x + inx, y + iny)))
 
                 brailles_list.append(
-                    self._braille_handler.get_symbol(colors, self._threshold))
+                    self._braille_handler.get_symbol(colors))
             brailles_list.append('\n')
 
         return ''.join(brailles_list)

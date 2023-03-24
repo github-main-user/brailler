@@ -2,38 +2,27 @@ import strings
 
 
 class _ColorHelper:
-    def get_brightness(self, r, g, b) -> float:
-        return (r / 255 + g / 255 + b / 255) / 3
-
-
-class _SequenceHelper:
-    def even_out_sequence(self, colors, num):
-        if len(colors) < num:
-            colors.extend([(0, 0, 0) for i in range(num - len(colors))])
-        else:
-            colors[:] = colors[:num]
+    def get_brightness(self, grey_color) -> float:
+        return grey_color / 255
 
 
 class BrailleHandler:
     def __init__(self):
         self._color_helper = _ColorHelper()
-        self._sequence_helper = _SequenceHelper()
         self._brailles = strings.BRAILLES
 
     def _byte_to_symbol(self, byte):
-        '''Input 11000011 -> Output "⢣" ''' 
+        '''Input 11000011 -> Output "⢣" '''
         return self._brailles[byte]
 
-    def get_symbol(self, colors: list, threshold: float):
+    def get_symbol(self, colors: list):
         '''Input [(r, g, b), (r, g, b), ...] -> Output "⣿" '''
         byte = 0
-        self._sequence_helper.even_out_sequence(colors, 8)
 
-        for r, g, b in colors:
-            brightness = self._color_helper.get_brightness(r, g, b)
-
+        for grey_color in colors:
             byte <<= 1  # shift to left (0b0001 => 0b0010)
-            if brightness >= threshold:
+
+            if grey_color == 255:
                 byte |= 1  # turn on last bit (0b0010 => 0b0011)
 
         return self._byte_to_symbol(byte)
