@@ -16,7 +16,7 @@ class Starter:
             braille_image = BrailleImage(image=img,
                                          width=args.x,
                                          height=args.y,
-                                         bright_bound=args.b)
+                                         threshold=args.t)
 
             print(braille_image.generate_image())
 
@@ -34,7 +34,7 @@ class Parser:
         self._parser.add_argument(
             '-p', type=str, help='Specify image path (if empty - do screenshot)', default='')
         self._parser.add_argument(
-            '-b', type=float, help='Specify brightness bound 0.0 -> 1.0 (0.5 by default)', default=0.5)
+            '-t', type=float, help='Specify threshold 0.0 -> 1.0 (0.5 by default)', default=0.5)
 
         args = self._parser.parse_args()
 

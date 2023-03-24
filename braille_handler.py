@@ -24,16 +24,16 @@ class BrailleHandler:
         '''Input 11000011 -> Output "⢣" ''' 
         return self._brailles[byte]
 
-    def get_symbol(self, colors: list, bright_bound: float):
+    def get_symbol(self, colors: list, threshold: float):
         '''Input [(r, g, b), (r, g, b), ...] -> Output "⣿" '''
         byte = 0
         self._sequence_helper.even_out_sequence(colors, 8)
 
         for r, g, b in colors:
-            bright = self._color_helper.get_brightness(r, g, b)
+            brightness = self._color_helper.get_brightness(r, g, b)
 
             byte <<= 1  # shift to left (0b0001 => 0b0010)
-            if bright >= bright_bound:
+            if brightness >= threshold:
                 byte |= 1  # turn on last bit (0b0010 => 0b0011)
 
         return self._byte_to_symbol(byte)

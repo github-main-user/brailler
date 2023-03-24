@@ -2,6 +2,7 @@ import os
 import subprocess
 
 from braille_handler import BrailleHandler
+from PIL import Image
 
 
 class _ExistanceChacker:
@@ -28,7 +29,7 @@ class _ScreenshotTaker:
         self._free_path()
         self._take_screenshot()
         return _ExistanceChacker.is_exist(self._temp_file,
-                                         error_msg='An error occurred while creating a screenshot')
+                                          error_msg='An error occurred while creating a screenshot')
 
 
 class FileHandler:
@@ -38,7 +39,7 @@ class FileHandler:
     def get_file_path(self, file_path: str) -> str:
         if file_path:
             return _ExistanceChacker.is_exist(file_path,
-                                             error_msg='The file does not exists')
+                                              error_msg='The file does not exists')
         else:
             return self._screenshoter.get_screenshot()
 
@@ -65,13 +66,42 @@ class _SteppedInt:
 
 
 class BrailleImage:
-    def __init__(self, image, width, height, bright_bound):
+    def __init__(self, image, width, height, threshold):
         self._width = _SteppedInt(width, 2)
         self._height = _SteppedInt(height, 4)
-        self._image = image.resize((self._width, self._height))
-        self._bright_bound = bright_bound
+
+        image = image.convert('L')
+        image = image.resize((self._width, self._height))
+        self._image = self._dithering(image)
+        self._threshold = threshold
 
         self._braille_handler = BrailleHandler()
+
+    @staticmethod
+    def _dithering(image):
+        output_image = Image.new('L', image.size, 255)
+
+        color_depth = 8
+        palette = [i * 255 // (color_depth - 1)
+                   for i in range(color_depth - 1)]
+
+        for y in range(1, image.height - 1):
+            for x in range(1, image.width - 1):
+                old_pixel = image.getpixel((x, y))
+                new_pixel = min(palette, key=lambda x: abs(x - old_pixel))
+                output_image.putpixel((x, y), new_pixel)
+                quant_error = old_pixel - new_pixel
+
+                image.putpixel(
+                    (x + 1, y), image.getpixel((x + 1, y)) + quant_error * 7 // 16)
+                image.putpixel(
+                    (x - 1, y + 1), image.getpixel((x - 1, y + 1)) + quant_error * 3 // 16)
+                image.putpixel(
+                    (x, y + 1), image.getpixel((x, y + 1)) + quant_error * 5 // 16)
+                image.putpixel(
+                    (x + 1, y + 1), image.getpixel((x + 1, y + 1)) + quant_error * 1 // 16)
+
+        return output_image
 
     def generate_image(self) -> str:
         '''Generates a list of "⣿" and returns it as a formatted string'''
@@ -85,7 +115,7 @@ class BrailleImage:
                         colors.append(self._image.getpixel((x + inx, y + iny)))
 
                 brailles_list.append(
-                    self._braille_handler.get_symbol(colors, self._bright_bound))
+                    self._braille_handler.get_symbol(colors, self._threshold))
             brailles_list.append('\n')
 
         return ''.join(brailles_list)
