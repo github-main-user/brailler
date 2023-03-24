@@ -2,7 +2,7 @@ import os
 import subprocess
 
 from braille_handler import BrailleHandler
-from PIL import Image
+from PIL import Image, ImageOps
 
 
 class _ExistanceChacker:
@@ -70,6 +70,7 @@ class BrailleImage:
         self._width = _SteppedInt(symbols_x * 2, 2)
         self._height = _SteppedInt(symbols_y * 4, 4)
 
+        image = ImageOps.autocontrast(image)
         image = image.convert('L')
         image = image.resize((self._width, self._height))
         self._image = self._dithering(image, threshold)

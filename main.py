@@ -37,7 +37,7 @@ class Parser:
         self._parser.add_argument(
             '-p', type=str, help='Specify image path (if empty - do screenshot)', default='')
         self._parser.add_argument(
-            '-t', type=float, help='Specify threshold 0.0 -> 1.0 (0.5 by default)', default=0.5)
+            '-t', type=float, help='Specify dithering threshold 0.0 -> 1.0 (0.5 by default)', default=0.5)
 
         args = self._parser.parse_args()
 
