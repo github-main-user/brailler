@@ -16,7 +16,7 @@ class BrailleHandler:
         return self._brailles[byte]
 
     def get_symbol(self, colors: list):
-        '''Input [(r, g, b), (r, g, b), ...] -> Output "⣿" '''
+        '''Input 8 colors (just brightness 0...255) -> Output "⣿" '''
         byte = 0
 
         for grey_color in colors:

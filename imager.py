@@ -6,6 +6,7 @@ from PIL import Image, ImageOps
 
 
 class _ExistanceChecker:
+    '''Check existance of the file true => return file, false => raise erroe'''
     @staticmethod
     def is_exist(file_path, error_msg) -> str:
         if os.path.exists(file_path):
@@ -28,7 +29,7 @@ class _ScreenshotTaker:
     def get_screenshot(self) -> str:
         self._free_path()
         self._take_screenshot()
-        return _ExistanceChacker.is_exist(self._temp_file,
+        return _ExistanceChecker.is_exist(self._temp_file,
                                           error_msg='An error occurred while creating a screenshot')
 
 
@@ -65,21 +66,24 @@ class _SteppedInt:
         return (i for i in range(0, self._value, self._step))
 
 
-class BrailleImage:
-    def __init__(self, image, symbols_x, symbols_y, threshold):
-        self._width = _SteppedInt(symbols_x * 2, 2)
-        self._height = _SteppedInt(symbols_y * 4, 4)
+class _Monochromer:
+    _WHITE = 255
+    _BLACK = 0
 
-        image = ImageOps.autocontrast(image)
-        image = image.convert('L')
-        image = image.resize((self._width, self._height))
-        self._image = self._dithering(image, threshold)
+    @classmethod
+    def to_monochrome(cls, image, threshold):
+        new_image = cls._convert_to_greyscale(image)
+        new_image = cls._dithering(new_image, threshold)
 
-        self._braille_handler = BrailleHandler()
+        return new_image
 
     @staticmethod
-    def _dithering(image, threshold):
-        output_image = Image.new('L', image.size, 255)
+    def _convert_to_greyscale(image):
+        return image.convert('L')
+
+    @classmethod
+    def _dithering(cls, image, threshold):
+        output_image = Image.new('L', image.size, cls._WHITE)
 
         color_depth = 8
         palette = [i * 255 // (color_depth - 1)
@@ -89,10 +93,10 @@ class BrailleImage:
             for x in range(1, image.width - 1):
                 old_pixel = image.getpixel((x, y))
 
-                if old_pixel / 255 < threshold: 
-                    new_pixel = 0
+                if old_pixel / 255 < threshold:
+                    new_pixel = cls._BLACK
                 else:
-                    new_pixel = 255
+                    new_pixel = cls._WHITE
 
                 # new_pixel = min(palette, key=lambda x: abs(x - old_pixel))
                 output_image.putpixel((x, y), new_pixel)
@@ -107,9 +111,38 @@ class BrailleImage:
                 image.putpixel(
                     (x + 1, y + 1), image.getpixel((x + 1, y + 1)) + quant_error * 1 // 16)
 
-        # output_image.show()
-        # exit()
         return output_image
+
+
+class _MonochromeImage:
+    def __init__(self, image, threshold):
+        self._image = image
+        self._threshold = threshold
+
+    def resize(self, width, height):
+        self._image = self._image.resize((width, height))
+
+    def autocontrast(self):
+        self._image = ImageOps.autocontrast(self._image)
+
+    def convert_to_monochrome(self):
+        self._image = _Monochromer.to_monochrome(self._image, self._threshold)
+
+    def get_pixel(self, x, y):
+        return self._image.getpixel((x, y))
+
+
+class BrailleImage():
+    def __init__(self, image, symbols_x, symbols_y, threshold):
+        self._monochrome_image = _MonochromeImage(image, threshold)
+        self._monochrome_image.autocontrast()
+        self._monochrome_image.resize(symbols_x * 2, symbols_y * 4)
+        self._monochrome_image.convert_to_monochrome()
+
+        self._width = _SteppedInt(symbols_x * 2, 2)
+        self._height = _SteppedInt(symbols_y * 4, 4)
+
+        self._braille_handler = BrailleHandler()
 
     def generate_image(self) -> str:
         '''Generates a list of "⣿" and returns it as a formatted string'''
@@ -120,7 +153,8 @@ class BrailleImage:
 
                 for iny in self._height.step:
                     for inx in self._width.step:
-                        colors.append(self._image.getpixel((x + inx, y + iny)))
+                        colors.append(
+                            self._monochrome_image.get_pixel(x + inx, y + iny))
 
                 brailles_list.append(
                     self._braille_handler.get_symbol(colors))
