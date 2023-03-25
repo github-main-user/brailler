@@ -32,12 +32,12 @@ class Parser:
 
     def start_parsing(self):
         self._parser.add_argument(
-            '-s', type=int, nargs='+', help='Specify braille image size x y (in symbols) - default COLS LINES',
+            '-s', '--size', type=int, nargs='+', help='Specify braille image size x y (in symbols) - default COLS LINES',
             default=[COLS, LINES])
         self._parser.add_argument(
-            '-p', type=str, help='Specify image path (if empty - do screenshot)', default='')
+            '-p', '--path', type=str, help='Specify image path (if empty - do screenshot)', action='store_true', default='')
         self._parser.add_argument(
-            '-t', type=float, help='Specify dithering threshold 0.0 -> 1.0 (0.5 by default)', default=0.5)
+            '-t', '--threshold', type=float, help='Specify dithering threshold 0.0 -> 1.0 (0.5 by default)', default=0.5)
 
         args = self._parser.parse_args()
 
