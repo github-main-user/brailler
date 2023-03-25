@@ -5,7 +5,7 @@ from braille_handler import BrailleHandler
 from PIL import Image, ImageOps
 
 
-class _ExistanceChacker:
+class _ExistanceChecker:
     @staticmethod
     def is_exist(file_path, error_msg) -> str:
         if os.path.exists(file_path):
