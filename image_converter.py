@@ -26,11 +26,8 @@ class ImageConverter:
                 output_image.putpixel((x, y), new_pixel)
                 quant_error = old_pixel - new_pixel
 
-                try:
-                    new_image.putpixel((x % (width - 1) + 1, y),
-                                       new_image.getpixel((x % (width - 1) + 1, y)) + quant_error * 7 // 16)
-                except:
-                    print(x % (width - 1) + 1, width, x)
+                new_image.putpixel((x % (width - 1) + 1, y),
+                                   new_image.getpixel((x % (width - 1) + 1, y)) + quant_error * 7 // 16)
                 new_image.putpixel((x - 1, y % (height - 1) + 1),
                                    new_image.getpixel((x - 1, y % (height - 1) + 1)) + quant_error * 3 // 16)
                 new_image.putpixel((x, y % (height - 1) + 1),
