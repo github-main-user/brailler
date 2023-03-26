@@ -1,6 +1,3 @@
-import strings
-
-
 class SymbolHandler:
     @staticmethod
     def get_symbol(colors: list):
