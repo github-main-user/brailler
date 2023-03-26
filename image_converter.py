@@ -7,15 +7,15 @@ class ImageConverter:
         new_image = ImageOps.autocontrast(image.convert('L'))
         output_image = Image.new('L', new_image.size, 255)
 
-        width = image.width
-        height = image.height
+        W = image.width
+        H = image.height
 
         color_depth = 8
         palette = [i * 255 // (color_depth - 1)
                    for i in range(color_depth - 1)]
 
-        for y in range(height):
-            for x in range(width):
+        for y in range(H):
+            for x in range(W):
                 old_pixel = new_image.getpixel((x, y))
 
                 if old_pixel / 255 < threshold:
@@ -26,13 +26,13 @@ class ImageConverter:
                 output_image.putpixel((x, y), new_pixel)
                 quant_error = old_pixel - new_pixel
 
-                new_image.putpixel((x % (width - 1) + 1, y),
-                                   new_image.getpixel((x % (width - 1) + 1, y)) + quant_error * 7 // 16)
-                new_image.putpixel((x - 1, y % (height - 1) + 1),
-                                   new_image.getpixel((x - 1, y % (height - 1) + 1)) + quant_error * 3 // 16)
-                new_image.putpixel((x, y % (height - 1) + 1),
-                                   new_image.getpixel((x, y % (height - 1) + 1)) + quant_error * 5 // 16)
-                new_image.putpixel((x % (width - 1) + 1, y % (height - 1) + 1),
-                                   new_image.getpixel((x % (width - 1) + 1, y % (height - 1) + 1)) + quant_error * 1 // 16)
+                new_image.putpixel((x % (W - 1) + 1, y),
+                                   new_image.getpixel((x % (W - 1) + 1, y)) + quant_error * 7 // 16)
+                new_image.putpixel((x - 1, y % (H - 1) + 1),
+                                   new_image.getpixel((x - 1, y % (H - 1) + 1)) + quant_error * 3 // 16)
+                new_image.putpixel((x, y % (H - 1) + 1),
+                                   new_image.getpixel((x, y % (H - 1) + 1)) + quant_error * 5 // 16)
+                new_image.putpixel((x % (W - 1) + 1, y % (H - 1) + 1),
+                                   new_image.getpixel((x % (W - 1) + 1, y % (H - 1) + 1)) + quant_error * 1 // 16)
 
         return output_image
