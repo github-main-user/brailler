@@ -3,7 +3,7 @@ import argparse
 
 from os import get_terminal_size
 from PIL import Image
-from file_handler import FileHandler
+from screenshot_handler import ScreenshotHandler
 from braille_generator import BrailleGenerator
 from image_converter import ImageConverter
 
@@ -12,7 +12,7 @@ LINES = get_terminal_size().lines
 
 
 def start_with_args(args):
-    file = args.path if args.path != '' else FileHandler.take_screenshot()
+    file = args.path if args.path != '' else ScreenshotHandler.take_screenshot()
 
     with Image.open(file) as img:
         img = img.resize((args.size[0] * 2, args.size[1] * 4))

@@ -2,7 +2,7 @@ import os
 import subprocess
 
 
-class FileHandler:
+class ScreenshotHandler:
     @staticmethod
     def take_screenshot() -> str:
         temp_file = '/tmp/brailler_temp_image.png'
