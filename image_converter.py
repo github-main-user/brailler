@@ -3,22 +3,18 @@ from PIL import Image, ImageOps
 
 class ImageConverter:
     @staticmethod
-    def to_monochrome(image, threshold) -> Image:
+    def to_monochrome(image) -> Image:
         new_image = ImageOps.autocontrast(image.convert('L'))
         output_image = Image.new('L', new_image.size, 255)
 
         W = image.width
         H = image.height
 
-        color_depth = 8
-        palette = [i * 255 // (color_depth - 1)
-                   for i in range(color_depth - 1)]
-
         for y in range(H):
             for x in range(W):
                 old_pixel = new_image.getpixel((x, y))
 
-                if old_pixel / 255 < threshold:
+                if old_pixel < 128:
                     new_pixel = 0
                 else:
                     new_pixel = 255

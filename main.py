@@ -16,11 +16,10 @@ def start_with_args(args):
 
     with Image.open(file) as img:
         img = img.resize((args.size[0] * 2, args.size[1] * 4))
-        img = ImageConverter.to_monochrome(img, args.threshold)
+        img = ImageConverter.to_monochrome(img)
 
         braille_image = BrailleGenerator.generate_braille_text(img)
-        print(braille_image)
-
+        print(braille_image, end='')
 
 class Parser:
     def __init__(self):
@@ -32,8 +31,6 @@ class Parser:
             default=[COLS, LINES])
         self._parser.add_argument(
             '-p', '--path', type=str, help='Specify image path (if empty - do screenshot)', default='')
-        self._parser.add_argument(
-            '-t', '--threshold', type=float, help='Specify dithering threshold 0.0 -> 1.0 (0.5 by default)', default=0.5)
 
         args = self._parser.parse_args()
 
