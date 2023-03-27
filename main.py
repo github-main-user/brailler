@@ -31,6 +31,8 @@ class Parser:
             default=[COLS, LINES])
         self._parser.add_argument(
             '-p', '--path', type=str, help='Specify image path (if empty - do screenshot)', default='')
+        # space symbol
+        # invert
 
         args = self._parser.parse_args()
 
