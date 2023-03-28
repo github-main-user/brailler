@@ -53,14 +53,15 @@ Converter for images to braille's font.
 ./main.py -p /path/to/image
 ```
 
->[!] If path is not specified - will be use a **scrot** program to take a screenshot'
+>[!] If path is not specified - will be use a **scrot** program to take a screenshot'.
 
 ---
 
->To change the empty symbol, by default it is empty braiile symbol:
+>To change the empty symbol:
 ```bash
 ./main.py -e '@'
 ```
+>By default it is a braille's empty symbol, it can have other width.
 
 ---
 
