@@ -1,4 +1,4 @@
-Converter for images to braille's font.
+### Converter for images to braille's font.
 
 ⠔⢊⡡⠔⢆⢆⢊⣁⠱⡈⠦⠱⡈⡡⠑⠴⠊⢆⢉⠤⠊⣀⠲⡈⠂⠑⠠⡀⠉⠠⠊⠠⠁⠄⠈⠀⡀⠡⠀⢄⠀⢂⠐⠒⠐⡠⠀⠈
 ⡡⠔⢊⡡⠑⡐⠶⠊⡉⢄⠲⡉⢄⠔⢊⡡⠔⠤⠒⣈⠦⠤⠒⢋⠤⠂⡃⠣⠁⠐⠊⠠⠀⠁⠀⢂⠄⠀⠢⡀⠐⠁⠄⠀⠠⠀⠠⠀
@@ -61,7 +61,7 @@ Converter for images to braille's font.
 ```bash
 ./main.py -e '@'
 ```
->By default it is a braille's empty symbol, it can have other width.
+>By default it is a braille's empty symbol, but it can have other width.
 
 ---
 

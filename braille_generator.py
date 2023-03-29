@@ -10,8 +10,8 @@ class SymbolHandler:
         cls.brailles = string[:1] + cls.brailles
 
     @classmethod
-    def set_invert_state(cls, invert):
-        cls.threshold = 0 if invert else 255
+    def set_invert_state(cls, invert_state):
+        cls.threshold = 0 if invert_state else 255
 
     @classmethod
     def get_symbol(cls, colors: list):
@@ -29,10 +29,10 @@ class SymbolHandler:
 
 class BrailleGenerator:
     @staticmethod
-    def generate_braille_text(image, empty, invert) -> str:
+    def generate_braille_text(image, empty, invert_state) -> str:
         '''Generates a list of "⣿" and returns it as a formatted string'''
         SymbolHandler.set_empty_symbol(empty)
-        SymbolHandler.set_invert_state(invert)
+        SymbolHandler.set_invert_state(invert_state)
 
         brailles_list = []
         for y in range(0, image.height, 4):
